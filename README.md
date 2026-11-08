@@ -266,7 +266,7 @@ After that, you launch WayToObsidian via its own app icon.
 
 ### Publishing Updates
 
-1. When changing app files, increase the version number in `sw.js` (currently `waytoobsidian-v15`).
+1. When changing app files, increase the version number in `sw.js` (currently `waytoobsidian-v17`).
 2. Upload the folder to Netlify again.
 3. The app loads the new version automatically on the next launch with an internet connection.
 

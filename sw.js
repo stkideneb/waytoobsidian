@@ -1,5 +1,5 @@
 // Bump the version whenever app files change so old caches get cleaned up.
-const CACHE = "waytoobsidian-v15";
+const CACHE = "waytoobsidian-v17";
 
 const FILES = [
   "./",

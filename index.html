@@ -1092,6 +1092,56 @@
       transform: none;
     }
 
+    /* Übungsauswahl: feste Höhe, damit das Sheet beim Filtern nicht
+       schrumpft. --kb-offset / --vv-height setzt das Script aus dem
+       sichtbaren Bereich, damit das Sheet über der Tastatur sitzt.
+       Titel und Suche bleiben stehen, nur die Liste scrollt. */
+    .sheet.tall {
+      bottom: var(--kb-offset, 0px);
+      height: calc(var(--vv-height, 100vh) * 0.85);
+      max-height: none;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: transform 0.3s var(--ease), bottom 0.2s var(--ease), height 0.2s var(--ease);
+    }
+
+    .sheet.tall.kb-open {
+      padding-bottom: 10px;
+    }
+
+    .sheet.tall #sheetBody {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sheet.tall #pickerList {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      margin-right: -10px;
+      padding-right: 10px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) transparent;
+    }
+
+    .sheet.tall #pickerList::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sheet.tall #pickerList::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 3px;
+    }
+
+    .sheet.tall #pickerList::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
     .sheet-handle {
       width: 40px;
       height: 5px;
@@ -1790,6 +1840,7 @@
       previous?.(null);
 
       clearTimeout(sheetHideTimer);
+      sheet.classList.remove("tall");
       $("sheetBody").innerHTML = html;
       sheet.hidden = false;
       backdrop.hidden = false;
@@ -1815,6 +1866,7 @@
       sheetHideTimer = setTimeout(() => {
         sheet.hidden = true;
         backdrop.hidden = true;
+        sheet.classList.remove("tall");
       }, 300);
     }
 
@@ -1841,6 +1893,7 @@
           <h3>${safe(title)}</h3>
           <input id="pickerSearch" type="search" placeholder="Suchen oder neue Übung eingeben …" autocomplete="off">
           <div id="pickerList"></div>`);
+        $("sheet").classList.add("tall");
         sheetResolver = resolve;
         pickerMarked = marked;
         renderPicker("");
@@ -1867,6 +1920,10 @@
             ${safe(e.name)}
             ${pickerMarked.includes(e.name) ? '<span class="muted small-text">bereits dabei</span>' : ""}
           </button>`).join("")}`).join("");
+
+      if (!matches.length) {
+        html = '<div class="empty">Keine Übung gefunden.</div>';
+      }
 
       const exact = exercises.some((e) => e.name.toLowerCase() === q);
       if (q && !exact) {
@@ -3283,6 +3340,21 @@
     if (newDefaultCount) toast(`${newDefaultCount} neue Übungen in der Bibliothek`, { duration: 3500 });
 
     // Diagramme bei Größenänderung (z. B. Drehen des iPhones) neu zeichnen
+    // Tastatur auf dem iPhone: Sie überdeckt das Layout, statt es zu verkleinern.
+    // Deshalb Höhe und Abstand des sichtbaren Bereichs messen und dem Sheet mitgeben.
+    function syncViewport() {
+      const vv = window.visualViewport;
+      if (!vv) return;
+      const root = document.documentElement.style;
+      const kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      root.setProperty("--vv-height", `${vv.height}px`);
+      root.setProperty("--kb-offset", `${kb}px`);
+      $("sheet").classList.toggle("kb-open", kb > 0);
+    }
+    window.visualViewport?.addEventListener("resize", syncViewport);
+    window.visualViewport?.addEventListener("scroll", syncViewport);
+    syncViewport();
+
     let resizeTimer;
     window.addEventListener("resize", () => {
       clearTimeout(resizeTimer);
