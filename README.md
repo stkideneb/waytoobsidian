@@ -119,13 +119,24 @@ You can find PRs in the running workout, under **Stats** and in the **Exercise l
 
 Via the data icon in the top right of the header:
 
-- **Export data**: saves all workouts, routines (including icons and images) and exercises to a file `waytoobsidian-backup-YYYY-MM-DD.json`. On the iPhone, the share sheet opens, e.g. "Save to Files" or iCloud Drive. On a computer, the file is downloaded.
-- **Import data**: choose a backup file (including older backups from the "IronArm" days). WayToObsidian checks the file and shows how many workouts, routines and exercises it contains. Then you choose:
+**Automatic online backup**
+
+- After every change (saved workout, edited routine, new exercise …), WayToObsidian uploads a backup in the background to your own Netlify site (`/api/backup`, stored in Netlify Blobs).
+- The app keeps working fully offline. Changes made without internet are uploaded as soon as a connection is available (also when opening or leaving the app).
+- Each device gets a random **backup code** (20 characters, e.g. `ABCDE-FGH23-JKLMN-PQRS4`), shown in the data sheet with a "Copy code" button. **Write it down**, e.g. in a password manager. Without the code, the backup cannot be found.
+- **Restore with backup code**: enter the code, then choose *Merge* or *Replace all* (same as importing a file). The device then continues backing up to that code. This works after clearing website data and on a new iPhone.
+- The server only stores a SHA-256 hash of the code, never the code itself. Besides the latest state, one copy per day is kept as a safety net (not yet restorable from the app).
+- The status line shows when the last online backup succeeded, or whether it is currently unreachable.
+
+**Backup as a file**
+
+- **Export as file**: saves all workouts, routines (including icons and images) and exercises to a file `waytoobsidian-backup-YYYY-MM-DD.json`. On the iPhone, the share sheet opens, e.g. "Save to Files" or iCloud Drive. On a computer, the file is downloaded.
+- **Import file**: choose a backup file (including older backups from the "IronArm" days). WayToObsidian checks the file and shows how many workouts, routines and exercises it contains. Then you choose:
   - **Merge**: only adds what is missing on the device. Existing data stays unchanged.
   - **Replace all**: replaces all data on the device with the backup, after a confirmation prompt.
 - The date of the last export is also shown.
 
-This lets you back up your data, move to a new device, or take it with you when switching hosting or servers. The data is still stored only locally. Without an export, there is no backup.
+The file export is still useful as an extra copy that is completely independent of Netlify, e.g. when switching hosting.
 
 ### Training History
 
@@ -185,9 +196,10 @@ For bilateral exercises, PRs are tracked without arm distinction; for right/left
 | JavaScript | Logic and interaction (no frameworks) |
 | LocalStorage | Local storage of training data |
 | Service Worker | Offline operation and automatic updates |
+| Netlify Functions + Blobs | Automatic online backup (`/api/backup`) |
 | Web App Manifest | Installation on the home screen |
 
-**No external libraries** are required.
+**No external libraries** are required in the app. The backup function only uses `@netlify/blobs`, which Netlify installs automatically from `package.json`.
 
 ### Stored Data (LocalStorage)
 
@@ -199,7 +211,10 @@ For bilateral exercises, PRs are tracked without arm distinction; for right/left
 | `it_active` | the currently running workout (temporary storage) |
 | `it_workouts` | data from version 1.0/1.1 (kept only as a backup) |
 | `it_defaults_version` | version of the default exercise list |
-| `it_last_export` | date of the last export |
+| `it_last_export` | date of the last file export |
+| `it_backup_code` | backup code of this device |
+| `it_last_backup` | time of the last successful online backup |
+| `it_backup_pending` | set while changes still need to be uploaded |
 
 On the first launch of version 1.2 or later, the old entries from `it_workouts` are migrated automatically and grouped per training day into a workout named "Training". The old data is kept unchanged as a backup.
 
@@ -217,7 +232,7 @@ The app should be easy on the eyes, look good and not be overstimulating: dark s
 
 Routine icons are available in lilac, rose, blue, sage, gold and grey.
 
-All colors are defined as CSS variables at the top of `index.html` (`--accent`, `--gold`, `--danger` …). The app icon (`icon.svg` and the PNGs) uses the same colors and must be updated along with any color changes. The app deliberately uses no emojis, only simple icons.
+All colors are defined as CSS variables at the top of `css/app.css` (`--accent`, `--gold`, `--danger` …). The app icon (`icon.svg` and the PNGs) uses the same colors and must be updated along with any color changes. The app deliberately uses no emojis, only simple icons.
 
 ### iPhone Optimizations
 
@@ -234,19 +249,44 @@ All colors are defined as CSS variables at the top of `index.html` (`--accent`, 
 
 ```text
 waytoobsidian/
-├── index.html            Main application (HTML, CSS and JavaScript)
-├── manifest.json         PWA configuration
-├── sw.js                 Service worker (offline caching & updates)
-├── icon.svg              App icon (vector)
-├── apple-touch-icon.png  App icon for the iPhone home screen (180×180)
-├── icon-192.png          App icon for the manifest (192×192)
-├── icon-512.png          App icon for the manifest (512×512)
-├── favicon.ico           Browser icon (32×32, for all browsers)
-├── favicon-32.png        Browser icon as PNG
-├── robots.txt            Block search engines
-├── _headers              Netlify headers (noindex for all files)
-└── readme.md             Project documentation
+├── index.html              Page structure (HTML only), loads CSS and scripts
+├── css/
+│   └── app.css             All styles (colors as CSS variables at the top)
+├── js/                     App logic, loaded in this order:
+│   ├── exercises-data.js   Default exercise list
+│   ├── storage.js          LocalStorage, loading and saving data
+│   ├── helpers.js          Date formatting and small helpers
+│   ├── sheet.js            Bottom sheets, confirmations, exercise picker
+│   ├── stats.js            Evaluation: PRs, total volume
+│   ├── navigation.js       Tabs and page switching
+│   ├── home.js             Home screen and workout details
+│   ├── routines.js         Routines, routine icons, routine editor
+│   ├── workout.js          Running workout
+│   ├── history.js          Training history
+│   ├── progress.js         Stats and records
+│   ├── library.js          Exercise library and exercise settings
+│   ├── backup.js           File export/import and automatic online backup
+│   └── app.js              Rendering and app start (must be last)
+├── netlify/functions/
+│   └── backup.mjs          Online backup endpoint (/api/backup)
+├── netlify.toml            Netlify configuration (publish folder, functions)
+├── package.json            Dependency for the backup function (@netlify/blobs)
+├── manifest.json           PWA configuration
+├── sw.js                   Service worker (offline caching & updates)
+├── icon.svg                App icon (vector)
+├── apple-touch-icon.png    App icon for the iPhone home screen (180×180)
+├── icon-192.png            App icon for the manifest (192×192)
+├── icon-512.png            App icon for the manifest (512×512)
+├── favicon.ico             Browser icon (32×32, for all browsers)
+├── favicon-32.png          Browser icon as PNG
+├── robots.txt              Block search engines
+├── _headers                Netlify headers (noindex for all files)
+└── README.md               Project documentation
 ```
+
+The scripts are plain `<script>` files (no modules, no build step) that share global functions, so the `onclick` handlers in the HTML keep working. Their order in `index.html` matters: data and helpers first, `app.js` last.
+
+**Adding a new CSS or JS file:** include it in `index.html` **and** add it to the `FILES` list in `sw.js`, otherwise it is missing offline.
 
 ---
 
@@ -254,23 +294,28 @@ waytoobsidian/
 
 ### Hosting on Netlify
 
-1. Save all project files in a single folder.
-2. Open <https://app.netlify.com/drop>.
-3. Upload the project folder.
-4. Open the generated website address on the iPhone in **Safari**.
+The online backup needs a Netlify Function. **Netlify Drop (drag & drop upload) does not support functions**, so the site is deployed from the GitHub repository:
+
+1. In Netlify: **Add new site** → **Import an existing project** → GitHub → choose the `waytoobsidian` repository.
+   (For an existing site: *Site configuration* → *Build & deploy* → *Link repository*.)
+2. Leave the build command empty. Publish directory and functions folder come from `netlify.toml`.
+3. Deploy. Netlify installs `@netlify/blobs` automatically and publishes the function under `/api/backup`.
+4. Open the website address on the iPhone in **Safari**.
 5. Select **Share** → **Add to Home Screen**.
 
 After that, you launch WayToObsidian via its own app icon.
+
+Without the function (e.g. uploaded via Netlify Drop or opened locally), the app still works completely; only the online backup shows as unreachable.
 
 > **Important:** The site must be **publicly accessible** (Netlify → *Site configuration* → *Access & security* → *Visitor access / Site protection* → public). If password or team protection is active, the browser and iPhone load the icons and manifest without logging in and only receive the login page. In that case only the letter "I" appears instead of the icon, and offline mode and installation won't work reliably either.
 
 ### Publishing Updates
 
-1. When changing app files, increase the version number in `sw.js` (currently `waytoobsidian-v17`).
-2. Upload the folder to Netlify again.
+1. When changing app files, increase the version number in `sw.js` (currently `waytoobsidian-v18`).
+2. Commit and push to GitHub. Netlify deploys automatically.
 3. The app loads the new version automatically on the next launch with an internet connection.
 
-If the app icon changes, regenerate all PNG sizes (`apple-touch-icon.png`, `icon-192.png`, `icon-512.png`) from `icon.svg`. The manifest deliberately lists only PNG icons, because iOS doesn't use SVG icons for the home screen. The home screen icon and the favicon are also embedded directly in `index.html` as Base64 data (this works even on access-protected sites) and must be replaced there as well when the icon changes. Otherwise the iPhone only shows the initial letter "I".
+If the app icon changes, regenerate all PNG sizes (`apple-touch-icon.png`, `icon-192.png`, `icon-512.png`) from `icon.svg`. The manifest deliberately lists only PNG icons, because iOS doesn't use SVG icons for the home screen. The home screen icon and the favicon are also embedded directly in the `<head>` of `index.html` as Base64 data (this works even on access-protected sites) and must be replaced there as well when the icon changes. Otherwise the iPhone only shows the initial letter "I".
 
 iOS only picks up a changed app icon after you remove the app from the home screen and add it again. Your training data is preserved.
 
@@ -278,7 +323,7 @@ iOS only picks up a changed app icon after you remove the app from the home scre
 
 ## 7. Offline Functionality
 
-The service worker caches all app files. The following works offline:
+The service worker caches all app files (HTML, CSS, all scripts, icons). HTML, CSS and JS are loaded network-first, so an update always arrives complete; offline they come from the cache. The following works offline:
 
 - Launching the app
 - Logging workouts and starting routines
@@ -290,7 +335,7 @@ When an internet connection is available, WayToObsidian automatically loads the 
 
 The initial setup requires an internet connection.
 
-> **Important:** Training data is stored in Safari's LocalStorage. If you clear website data in Safari, your training data will be removed as well. WayToObsidian asks the browser to keep the data persistently, but there is no cloud sync.
+> **Important:** Training data is stored in Safari's LocalStorage. If you clear website data in Safari, your training data on the device is removed as well. With the automatic online backup and your backup code, you can restore it. Without the code, the data is lost.
 
 ---
 
@@ -299,14 +344,15 @@ The initial setup requires an internet connection.
 - **Not in search engines:** `noindex` in the page head, `robots.txt` and an `X-Robots-Tag` header (`_headers`) prevent Google & co. from indexing the site. Only people who know the link can find the app.
 
 - No user account required
-- No training data is sent to a server
-- Netlify only serves the app files
+- Training data is sent **only** to the backup function of your own Netlify site, stored under a hash of your backup code. Anyone who knows the code can read the backup, so keep it private.
+- No other servers, trackers or analytics
 
 ---
 
 ## 9. Planned Features
 
-- Automatic backup / cloud sync
+- Sync between several devices
+- Restoring older daily backup copies from the app
 - Body weight tracking
 - Rest timer between sets
 - Training notes

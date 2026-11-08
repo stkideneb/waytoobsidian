@@ -1,3 +1,0 @@
-# IronArm: nicht von Suchmaschinen erfassen
-User-agent: *
-Disallow: /

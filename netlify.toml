@@ -1,0 +1,4 @@
+# Die App liegt direkt im Hauptordner, es gibt keinen Build-Schritt.
+[build]
+  publish = "."
+  functions = "netlify/functions"
