@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- WayToObsidian – Farben passend zur App: Hintergrund #1a1722, Akzent Flieder #b9a5e6 -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#241d33"/>
+      <stop offset="1" stop-color="#15121c"/>
+    </linearGradient>
+    <linearGradient id="lilac" gradientUnits="userSpaceOnUse" x1="0" y1="100" x2="0" y2="460">
+      <stop offset="0" stop-color="#cbbaf0"/>
+      <stop offset="1" stop-color="#a48fd6"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="100" fill="url(#bg)"/>
+  <g transform="translate(-14 -24)">
+  <!-- Hantel -->
+  <g fill="none" stroke="url(#lilac)" stroke-width="24" stroke-linecap="round">
+    <path d="M206 140v54M240 112v110M420 112v110M454 140v54"/>
+    <path d="M240 167h180"/>
+  </g>
+  <!-- Gebeugter Arm -->
+  <path fill="url(#lilac)" d="M296 200 L364 200 C372 262 402 324 402 372 C402 418 370 446 330 446 L134 446 C100 446 82 422 84 392 C86 356 112 330 146 324 C168 246 268 236 298 290 C300 262 296 236 296 200 Z"/>
+  <!-- Faust -->
+  <rect x="282" y="122" width="96" height="88" rx="26" fill="url(#lilac)"/>
+  <!-- Details -->
+  <g fill="none" stroke="#1a1722" stroke-width="8" stroke-linecap="round">
+    <path d="M314 132v36M346 132v36"/>
+    <path d="M298 290 C306 312 316 330 330 342"/>
+  </g>
+  <path d="M170 320 C196 284 240 276 268 294" fill="none" stroke="#ffffff" stroke-opacity=".35" stroke-width="12" stroke-linecap="round"/>
+  </g>
+</svg>
