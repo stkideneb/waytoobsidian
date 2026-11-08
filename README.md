@@ -50,7 +50,18 @@ How the app is structured:
 ### Home Screen
 
 - **Greeting** with a large **Start workout** button. If a workout is already running, it says **Resume workout** instead.
-- **Key figures**: total workouts, workouts in the last 7 days and number of PRs set.
+- **Streak flame**: top right in the greeting card, a small flame with the number of consecutive days with at least one workout. Today counts as soon as you have trained; without a workout today, the streak continues from yesterday until the day is over. No streak, no flame. The flame changes color with the streak length:
+
+  | Streak | Flame |
+  |---|---|
+  | 1–6 days | yellow |
+  | from 7 days | yellow-orange |
+  | from 30 days | yellow-orange-red |
+  | from 60 days | dark red |
+  | from 182 days (half a year) | dark purple |
+  | from 365 days | black |
+- **PRs this week**: number of new personal records since Monday, shown in gold.
+- **Activity heatmap**: the last 18 weeks, one column per week, Monday to Sunday from top to bottom. The more workouts on a day, the stronger the lilac. Days with a PR have a gold border, today has a thin outline. Tapping a day opens its workout (several workouts on one day are listed in a short notice).
 - **Routines** with their exercises and a round play button to start them directly. Tapping a routine opens its detail view with the progress chart.
 - **History**: your most recent workouts, very compact with name, date ("Today", "Yesterday", "Thu, Nov 5") and the exercises below. Three exercises are shown, the rest is abbreviated with "…", e.g. *Pronation, Cupping, Rising, …* Tapping opens all workout details.
 
@@ -86,6 +97,8 @@ A routine is a saved list of exercises, e.g. "Arm Day A": Pronation, Cupping, Ri
 
 - **Create**: in the *Training* tab via "+ Create new routine" or on the home screen via "+ New". The routine editor opens as its own page.
 - **Reorder** exercises with the up and down arrows
+- **Description** (optional): free text for the whole routine, shown at the top of the detail view.
+- **Exercise notes** (optional): each exercise in a routine can have its own note (e.g. "slow negatives, strap on"). The note belongs only to that routine: the same exercise in another routine has its own note or none. Notes appear in the routine's detail view and under the exercise in a running workout started from that routine.
 - **Start**: on the home screen or in the Training tab. All exercises are then already in the workout, including set count, arm and values from last time.
 - **Icon**: Each routine gets an icon with a color or a custom image/logo. There are 13 simple icons to choose from (arm, dumbbell, barbell, kettlebell, grip, lightning, flame, target, trophy, heart, timer, mountain, star) and 6 muted colors. Custom images are automatically cropped to a square and scaled down to 128 × 128 px (a few KB) so storage doesn't fill up.
 - **Detail view** (tap a routine):
@@ -311,7 +324,7 @@ Without the function (e.g. uploaded via Netlify Drop or opened locally), the app
 
 ### Publishing Updates
 
-1. When changing app files, increase the version number in `sw.js` (currently `waytoobsidian-v18`).
+1. When changing app files, increase the version number in `sw.js` (currently `waytoobsidian-v21`).
 2. Commit and push to GitHub. Netlify deploys automatically.
 3. The app loads the new version automatically on the next launch with an internet connection.
 

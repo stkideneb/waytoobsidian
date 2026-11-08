@@ -75,6 +75,8 @@ function exerciseBlockHTML(ex, i) {
   const arm = sided ? ex.arm : null;
   const last = lastEntryFor(ex.name, arm);
   const pr = personalBest(entriesFor(ex.name, arm));
+  // Notiz aus der Routine, mit der das Workout gestartet wurde
+  const note = routineNote(routines.find((r) => r.id === active?.routineId), ex.name);
 
   const info = last
     ? `<div class="muted small-text">Letztes Mal · ${fmtDateFriendly(last.date)}</div>
@@ -112,6 +114,8 @@ function exerciseBlockHTML(ex, i) {
         </div>
         <button class="icon-btn" data-action="remove-ex" data-ex="${i}" aria-label="Übung entfernen">✕</button>
       </div>
+
+      ${note ? `<div class="ex-note in-workout">${safe(note)}</div>` : ""}
 
       ${armToggle}
 

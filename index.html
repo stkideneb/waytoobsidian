@@ -38,10 +38,16 @@
     <section id="home" class="page active">
       <div class="card hero" id="homeHero"></div>
 
-      <div class="stats">
-        <div class="stat"><strong id="statTotal">0</strong><span>Workouts</span></div>
-        <div class="stat"><strong id="statWeek">0</strong><span>Diese Woche</span></div>
-        <div class="stat"><strong id="statPRs">0</strong><span>PRs</span></div>
+      <div class="stats one">
+        <div class="stat stat-inline"><strong id="statWeekPRs">0</strong><span>PRs diese Woche</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Aktivität</h3>
+          <span class="muted" id="heatmapSummary"></span>
+        </div>
+        <div id="heatmap"></div>
       </div>
 
       <div class="card">
@@ -115,7 +121,8 @@
       </div>
 
       <div class="card">
-        <div id="routineSummary" class="muted spaced"></div>
+        <p id="routineDescText" class="routine-desc" hidden></p>
+        <div id="routineSummary" class="routine-ex-list"></div>
         <button class="full" onclick="startWorkout(currentRoutineId)">Routine starten</button>
       </div>
 
@@ -146,6 +153,10 @@
         <label for="routineName">Name</label>
         <input id="routineName" placeholder="z. B. Armwrestling Tag A" style="margin-bottom:0"
                oninput="routineDraft.name = this.value">
+        <label for="routineDesc" style="margin-top:14px">Beschreibung <span class="muted">(optional)</span></label>
+        <textarea id="routineDesc" rows="2" maxlength="1000" style="margin-bottom:0"
+                  placeholder="z. B. Fokus auf Pronation, schwere Sätze am Anfang"
+                  oninput="routineDraft.description = this.value; autoGrow(this)"></textarea>
       </div>
 
       <div class="card">

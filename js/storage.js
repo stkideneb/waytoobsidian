@@ -96,7 +96,7 @@ let currentRoutineId = null;
 let routineReturnPage = "home";
 let editorReturnPage = "train";
 let progressArm = "Alle";
-let routineDraft = { id: null, name: "", exercises: [], icon: null };
+let routineDraft = { id: null, name: "", description: "", exercises: [], notes: {}, icon: null };
 
 function store() {
   try {

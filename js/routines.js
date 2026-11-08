@@ -123,8 +123,31 @@ function renderIconEditor() {
 /* =========================================================
    Routinen
    ========================================================= */
+// Notizen gehören zur Routine: { "Übungsname": "Notiz" }
+function normalizeNotes(notes) {
+  const out = {};
+  if (notes && typeof notes === "object") {
+    for (const [name, text] of Object.entries(notes)) {
+      if (typeof text === "string" && text.trim()) out[name] = text;
+    }
+  }
+  return out;
+}
+
+function routineNote(routine, exerciseName) {
+  return routine?.notes?.[exerciseName]?.trim() || "";
+}
+
+// Textfeld wächst mit dem Inhalt
+function autoGrow(el) {
+  el.style.height = "auto";
+  el.style.height = `${el.scrollHeight + 2}px`;
+}
+
+const emptyRoutineDraft = () => ({ id: null, name: "", description: "", exercises: [], notes: {}, icon: { ...DEFAULT_ICON } });
+
 function newRoutine() {
-  routineDraft = { id: null, name: "", exercises: [], icon: { ...DEFAULT_ICON } };
+  routineDraft = emptyRoutineDraft();
   editorReturnPage = currentPage === "routine" ? "routine" : currentPage === "home" ? "home" : "train";
   show("editor");
 }
@@ -132,7 +155,14 @@ function newRoutine() {
 function editRoutine(id) {
   const r = routines.find((r) => r.id === id);
   if (!r) return;
-  routineDraft = { id: r.id, name: r.name, exercises: [...r.exercises], icon: normalizeIcon(r.icon) };
+  routineDraft = {
+    id: r.id,
+    name: r.name,
+    description: r.description || "",
+    exercises: [...r.exercises],
+    notes: normalizeNotes(r.notes),
+    icon: normalizeIcon(r.icon)
+  };
   editorReturnPage = "routine";
   show("editor");
 }
@@ -175,21 +205,38 @@ function moveRoutineExercise(index, direction) {
   renderEditor();
 }
 
+function setRoutineNote(index, text) {
+  const name = routineDraft.exercises[index];
+  if (name !== undefined) routineDraft.notes[name] = text;
+}
+
 function renderEditor() {
   $("editorTitle").textContent = routineDraft.id ? "Routine bearbeiten" : "Neue Routine";
   $("routineName").value = routineDraft.name;
+  $("routineDesc").value = routineDraft.description || "";
   $("editorCount").textContent = routineDraft.exercises.length ? `${routineDraft.exercises.length}` : "";
   renderIconEditor();
 
   $("routineExercises").innerHTML = routineDraft.exercises.length
     ? routineDraft.exercises.map((name, i) => `
-        <div class="list-item" style="cursor:default">
-          <span class="grow">${i + 1}. ${safe(name)}</span>
-          <button class="icon-btn" onclick="moveRoutineExercise(${i}, -1)" aria-label="Nach oben"${i === 0 ? " disabled" : ""}>${ICON_UP}</button>
-          <button class="icon-btn" onclick="moveRoutineExercise(${i}, 1)" aria-label="Nach unten"${i === routineDraft.exercises.length - 1 ? " disabled" : ""}>${ICON_DOWN}</button>
-          <button class="icon-btn" onclick="removeRoutineExercise(${i})" aria-label="Entfernen">✕</button>
+        <div class="list-item routine-ex">
+          <div class="routine-ex-head">
+            <span class="grow">${i + 1}. ${safe(name)}</span>
+            <button class="icon-btn" onclick="moveRoutineExercise(${i}, -1)" aria-label="Nach oben"${i === 0 ? " disabled" : ""}>${ICON_UP}</button>
+            <button class="icon-btn" onclick="moveRoutineExercise(${i}, 1)" aria-label="Nach unten"${i === routineDraft.exercises.length - 1 ? " disabled" : ""}>${ICON_DOWN}</button>
+            <button class="icon-btn" onclick="removeRoutineExercise(${i})" aria-label="Entfernen">✕</button>
+          </div>
+          <textarea rows="1" maxlength="500" placeholder="Notiz für diese Routine (optional)"
+                    aria-label="Notiz zu ${safe(name)}"
+                    oninput="setRoutineNote(${i}, this.value); autoGrow(this)">${safe(routineDraft.notes[name] || "")}</textarea>
         </div>`).join("")
     : '<div class="empty">Noch keine Übungen ausgewählt.</div>';
+
+  // Höhe erst nach dem Einblenden messbar
+  requestAnimationFrame(() => {
+    autoGrow($("routineDesc"));
+    $("routineExercises").querySelectorAll("textarea").forEach(autoGrow);
+  });
 }
 
 function saveRoutine() {
@@ -204,17 +251,29 @@ function saveRoutine() {
     return;
   }
 
+  const description = (routineDraft.description || "").trim();
+  // Nur Notizen von Übungen behalten, die noch in der Routine sind
+  const notes = {};
+  for (const ex of routineDraft.exercises) {
+    const text = (routineDraft.notes[ex] || "").trim();
+    if (text) notes[ex] = text;
+  }
+
   const existing = routines.find((r) => r.id === routineDraft.id);
   if (existing) {
     existing.name = name;
+    existing.description = description;
     existing.exercises = [...routineDraft.exercises];
+    existing.notes = notes;
     existing.icon = normalizeIcon(routineDraft.icon);
     currentRoutineId = existing.id;
   } else {
     const routine = {
       id: Date.now(),
       name,
+      description,
       exercises: [...routineDraft.exercises],
+      notes,
       icon: normalizeIcon(routineDraft.icon)
     };
     routines.push(routine);
@@ -223,7 +282,7 @@ function saveRoutine() {
 
   store();
   toast(existing ? "Routine aktualisiert" : "Routine gespeichert");
-  routineDraft = { id: null, name: "", exercises: [], icon: { ...DEFAULT_ICON } };
+  routineDraft = emptyRoutineDraft();
   show(existing ? "routine" : editorReturnPage === "routine" ? "home" : editorReturnPage);
 }
 
@@ -250,7 +309,17 @@ function renderRoutinePage() {
 
   $("routineTitle").textContent = r.name;
   $("routineIcon").innerHTML = routineIconHTML(r.icon, "lg");
-  $("routineSummary").textContent = r.exercises.join(", ");
+  const desc = (r.description || "").trim();
+  $("routineDescText").textContent = desc;
+  $("routineDescText").hidden = !desc;
+  $("routineSummary").innerHTML = r.exercises.map((name, i) => {
+    const note = routineNote(r, name);
+    return `
+      <div>
+        <div>${i + 1}. ${safe(name)}</div>
+        ${note ? `<div class="ex-note">${safe(note)}</div>` : ""}
+      </div>`;
+  }).join("");
 
   const done = sessions.filter((s) => s.routineId === r.id).sort(sessionsAsc);
   const values = done.map((s) => ({ date: s.date, value: sessionVolume(s) }));
