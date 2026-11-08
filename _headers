@@ -1,0 +1,3 @@
+# Netlify: für alle Dateien (auch Icons, Manifest) Suchmaschinen-Indexierung verbieten
+/*
+  X-Robots-Tag: noindex, nofollow

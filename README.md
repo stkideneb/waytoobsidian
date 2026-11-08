@@ -1,324 +1,324 @@
-# WayToObsidian – Armwrestling & Krafttraining
+# WayToObsidian – Armwrestling & Strength Training
 
 | | |
 |---|---|
 | **Version** | 1.9 |
-| **Plattform** | iPhone / iOS (läuft auch in jedem modernen Browser) |
-| **Technologie** | Progressive Web App (PWA) |
-| **Hosting** | Netlify (kostenloser Tarif) |
-| **Sprache** | Deutsch |
-| **Design** | Ruhiger Dark Mode in sanftem Lila, Flieder als Akzent, weiches Gold für Bestleistungen |
+| **Platform** | iPhone / iOS (also runs in any modern browser) |
+| **Technology** | Progressive Web App (PWA) |
+| **Hosting** | Netlify (free tier) |
+| **App language** | German (UI labels in this document are translated) |
+| **Design** | Calm dark mode in soft purple, lilac as accent, soft gold for personal bests |
 
 ---
 
-## 1. Projektbeschreibung
+## 1. Project Description
 
-WayToObsidian ist eine persönliche Fitness- und Trainings-App für das iPhone.
+WayToObsidian is a personal fitness and training app for the iPhone.
 
-Der Schwerpunkt liegt auf **Armwrestling-Training**. Zusätzlich gibt es eine Bibliothek für klassisches Krafttraining.
+The focus is on **armwrestling training**. In addition, there is a library for classic strength training.
 
-Mit WayToObsidian zeichnest du komplette Workouts auf, legst Routinen an, verfolgst deine Kraftsteigerung und hältst deine persönlichen Rekorde (PRs) fest.
+With WayToObsidian you log complete workouts, create routines, track your strength progress and record your personal records (PRs).
 
-Die App ist als **Offline-First-PWA** gebaut: Alle Trainingsdaten bleiben lokal auf deinem Gerät.
+The app is built as an **offline-first PWA**: all training data stays locally on your device.
 
 ---
 
-## 2. Bedienung auf einen Blick
+## 2. Usage at a Glance
 
-| Tab | Wofür |
+| Tab | Purpose |
 |---|---|
-| **Home** | Workout starten, Routinen, letzte Workouts |
-| **Training** | laufendes Workout, Routine starten, neue Routine erstellen |
-| **Historie** | alle Workouts mit allen Übungen |
-| **Stats** | Kraftverlauf pro Übung und alle Rekorde |
-| **Übungen** | Übungsbibliothek mit Suche |
+| **Home** | Start a workout, routines, recent workouts |
+| **Training** | Current workout, start a routine, create a new routine |
+| **History** | All workouts with all exercises |
+| **Stats** | Strength progress per exercise and all records |
+| **Exercises** | Exercise library with search |
 
-So ist die App aufgebaut:
+How the app is structured:
 
-- **Ein Tipp, ein Ziel**: Routinen, Workouts und Übungen sind direkt antippbar und öffnen ihre Details.
-- **Bottom-Sheets statt Popups**: Übungsauswahl, Workout-Details und Sicherheitsabfragen gleiten von unten ins Bild. Zum Schließen tippst du auf den abgedunkelten Bereich.
-- **Leiste „Workout läuft“**: Solange ein Workout läuft, bleibt über der Navigation eine Leiste mit Name und Laufzeit sichtbar. Ein Tipp bringt dich zurück ins Workout.
-- **Zurück-Buttons** auf allen Unterseiten (Routine-Details, Routinen-Editor).
-- **Spürbare Reaktionen**: Am Computer heben sich Buttons, Karten und Listeneinträge beim Darüberfahren leicht an bzw. werden hervorgehoben. Pfeile wandern mit, und Löschen-Buttons färben sich ein. Auf dem iPhone gibt es beim Antippen ein kurzes Druck-Feedback. Mit der Tastatur zeigt ein blauer Rahmen, welches Element ausgewählt ist.
-- **Daten-Symbol** oben rechts: Export und Import deiner Daten (siehe „Daten & Backup“).
-- **Rückmeldungen** als kurze Hinweise am unteren Rand, z. B. „Workout gespeichert“ oder „Neuer PR“.
+- **One tap, one target**: Routines, workouts and exercises can be tapped directly and open their details.
+- **Bottom sheets instead of popups**: Exercise picker, workout details and confirmation prompts slide in from the bottom. Tap the dimmed area to close them.
+- **"Workout in progress" bar**: While a workout is running, a bar with its name and elapsed time stays visible above the navigation. Tapping it takes you back to the workout.
+- **Back buttons** on all subpages (routine details, routine editor).
+- **Noticeable feedback**: On a computer, buttons, cards and list items lift slightly or highlight on hover. Arrows move along, and delete buttons change color. On the iPhone, tapping gives a short press feedback. With the keyboard, a blue outline shows which element is focused.
+- **Data icon** in the top right: export and import your data (see "Data & Backup").
+- **Notifications** as short toasts at the bottom, e.g. "Workout saved" or "New PR".
 
 ---
 
-## 3. Hauptfunktionen
+## 3. Main Features
 
-### Startseite
+### Home Screen
 
-- **Begrüßung** mit großem Button **Workout starten**. Läuft schon ein Workout, steht dort **Workout fortsetzen**.
-- **Kennzahlen**: Workouts gesamt, Workouts der letzten 7 Tage und Anzahl aufgestellter PRs.
-- **Routinen** mit ihren Übungen und einem runden Play-Button zum direkten Starten. Ein Tipp auf die Routine öffnet die Detailansicht mit dem Fortschrittsgraphen.
-- **Historie**: deine letzten Workouts, sehr kompakt mit Name, Datum („Heute“, „Gestern“, „Do., 5. Nov.“) und den Übungen darunter. Es werden drei Übungen gezeigt, der Rest wird mit „…“ abgekürzt, z. B. *Pronation, Cupping, Rising, …* Ein Tipp öffnet alle Details des Workouts.
+- **Greeting** with a large **Start workout** button. If a workout is already running, it says **Resume workout** instead.
+- **Key figures**: total workouts, workouts in the last 7 days and number of PRs set.
+- **Routines** with their exercises and a round play button to start them directly. Tapping a routine opens its detail view with the progress chart.
+- **History**: your most recent workouts, very compact with name, date ("Today", "Yesterday", "Thu, Nov 5") and the exercises below. Three exercises are shown, the rest is abbreviated with "…", e.g. *Pronation, Cupping, Rising, …* Tapping opens all workout details.
 
-### Training: Workouts aufzeichnen
+### Training: Logging Workouts
 
-Ein Workout ist eine Trainingseinheit mit beliebig vielen Übungen.
+A workout is a training session with any number of exercises.
 
-1. **Workout starten**: leer starten oder eine Routine wählen. Beim leeren Workout öffnet sich sofort die Übungsauswahl.
-2. **Übungen hinzufügen**: jederzeit über „+ Übung hinzufügen“. Die Auswahl ist nach Kategorien sortiert und durchsuchbar. Gibt es eine Übung noch nicht, legst du sie direkt aus der Suche heraus an.
-3. **Sätze eintragen**: pro Satz **kg + Wiederholungen** oder **kg + Sekunden**, je nach Zähleinheit der Übung. Leere Sätze werden ignoriert.
-   - **Noch nie gemacht:** die Übung startet mit **einem Satz**.
-   - **Schon mal gemacht:** so viele Sätze wie beim letzten Mal. Die damaligen kg- und Wiederholungs- bzw. Sekundenwerte stehen als graue Anhaltspunkte in den Feldern.
-4. **Workout speichern** über den Button unten. Zum Verwerfen tippst du oben im Workout auf den roten Mülleimer.
+1. **Start a workout**: start empty or pick a routine. For an empty workout, the exercise picker opens immediately.
+2. **Add exercises**: at any time via "+ Add exercise". The picker is sorted by category and searchable. If an exercise doesn't exist yet, you can create it directly from the search.
+3. **Enter sets**: per set **kg + reps** or **kg + seconds**, depending on the exercise's counting unit. Empty sets are ignored.
+   - **Never done before:** the exercise starts with **one set**.
+   - **Done before:** as many sets as last time. The previous kg and rep/second values appear as grey hints in the fields.
+4. **Save the workout** using the button at the bottom. To discard it, tap the red trash can at the top of the workout.
 
-Das Datum setzt WayToObsidian automatisch auf den Tag, an dem du das Workout startest.
+WayToObsidian automatically sets the date to the day you start the workout.
 
-Oben im Workout siehst du die **Laufzeit**. Sie wird beim Speichern als Trainingsdauer übernommen.
+The **elapsed time** is shown at the top of the workout. It is stored as the training duration when saving.
 
-Pro Übung im Workout siehst du:
+For each exercise in the workout you see:
 
-- dein **letztes Training** dieser Übung mit allen Sätzen
-- deine **PRs** für diese Übung
-- die Werte vom letzten Mal als **graue Platzhalter** in den Eingabefeldern
-- **„Werte übernehmen“**: trägt die Sätze vom letzten Mal direkt ein
+- your **last session** of this exercise with all sets
+- your **PRs** for this exercise
+- the values from last time as **grey placeholders** in the input fields
+- **"Apply values"**: fills in the sets from last time directly
 
-**Arm-Auswahl:** Nur Übungen, die auf *Rechts / Links* eingestellt sind, zeigen einen Umschalter für den rechten und linken Arm. WayToObsidian merkt sich den zuletzt trainierten Arm. Beidseitige Übungen wie Bankdrücken oder Kniebeugen haben keine Arm-Auswahl.
+**Arm selection:** Only exercises set to *Right / Left* show a toggle for the right and left arm. WayToObsidian remembers the arm trained last. Bilateral exercises such as bench press or squats have no arm selection.
 
-Das laufende Workout wird automatisch zwischengespeichert. Es geht also nicht verloren, wenn du die App schließt oder das iPhone sperrst.
+The running workout is saved automatically in the background, so it isn't lost if you close the app or lock the iPhone.
 
-### Routinen
+### Routines
 
-Eine Routine ist eine gespeicherte Liste von Übungen, z. B. „Arm Tag A“: Pronation, Cupping, Rising, Back Pressure.
+A routine is a saved list of exercises, e.g. "Arm Day A": Pronation, Cupping, Rising, Back Pressure.
 
-- **Anlegen**: im Tab *Training* über „+ Neue Routine erstellen“ oder auf der Startseite über „+ Neu“. Es öffnet sich der Routinen-Editor als eigene Seite.
-- **Reihenfolge** der Übungen mit den Pfeilen nach oben und unten ändern
-- **Starten**: auf der Startseite oder im Training-Tab. Alle Übungen sind dann schon im Workout, inklusive Satzanzahl, Arm und Werten vom letzten Mal.
-- **Symbol**: Jede Routine bekommt ein Symbol mit Farbe oder ein eigenes Bild bzw. Logo. Zur Auswahl stehen 13 schlichte Symbole (Arm, Hantel, Langhantel, Kettlebell, Griff, Blitz, Flamme, Ziel, Pokal, Herz, Timer, Berg, Stern) und 6 gedämpfte Farben. Eigene Bilder werden automatisch quadratisch zugeschnitten und auf 128 × 128 px verkleinert (wenige KB), damit der Speicher nicht vollläuft.
-- **Detailansicht** (Routine antippen):
-  - **Graph des Gesamtgewichts** pro Training über Tage und Monate. Die Zeitachse ist maßstabsgetreu, längere Pausen sind also als größere Abstände sichtbar.
-  - Bestwert und letzter Wert
-  - Liste aller Trainings dieser Routine mit Gesamtgewicht
-  - Bearbeiten und Löschen
+- **Create**: in the *Training* tab via "+ Create new routine" or on the home screen via "+ New". The routine editor opens as its own page.
+- **Reorder** exercises with the up and down arrows
+- **Start**: on the home screen or in the Training tab. All exercises are then already in the workout, including set count, arm and values from last time.
+- **Icon**: Each routine gets an icon with a color or a custom image/logo. There are 13 simple icons to choose from (arm, dumbbell, barbell, kettlebell, grip, lightning, flame, target, trophy, heart, timer, mountain, star) and 6 muted colors. Custom images are automatically cropped to a square and scaled down to 128 × 128 px (a few KB) so storage doesn't fill up.
+- **Detail view** (tap a routine):
+  - **Chart of total volume** per session over days and months. The time axis is to scale, so longer breaks show up as larger gaps.
+  - Best value and last value
+  - List of all sessions of this routine with total volume
+  - Edit and delete
 
-**Gesamtgewicht** = Summe aus *Gewicht × Wiederholungen* aller Sätze eines Workouts. Sätze mit Gewicht ohne Wiederholungen (z. B. statisches Halten) zählen einfach mit ihrem Gewicht.
+**Total volume** = sum of *weight × reps* across all sets of a workout. Sets with weight but no reps (e.g. static holds) simply count with their weight.
 
-### PR-System (persönliche Rekorde)
+### PR System (Personal Records)
 
-WayToObsidian führt für jede Übung **getrennt pro Arm-Einstellung** drei Rekorde:
+For every exercise, WayToObsidian keeps three records **separately per arm setting**:
 
-| Rekord | Bedeutung |
+| Record | Meaning |
 |---|---|
-| Gewicht | schwerster Satz in kg |
-| Wiederholungen | meiste Wiederholungen in einem Satz |
-| Haltezeit | längste Haltezeit in Sekunden |
+| Weight | heaviest set in kg |
+| Reps | most reps in a single set |
+| Hold time | longest hold time in seconds |
 
-Jeder Wert ist ein eigener Rekord. „45 kg · 8 Wdh.“ bedeutet also: 45 kg als schwerstes Gewicht und 8 als höchste Wiederholungszahl, nicht zwingend im selben Satz.
+Each value is its own record. "45 kg · 8 reps" therefore means: 45 kg as the heaviest weight and 8 as the highest rep count, not necessarily in the same set.
 
-- Wenn du beim Speichern einen Rekord brichst, erscheint **„Neuer PR“**.
-- In der **Historie** sind Workouts mit PR mit einem goldenen **PR**-Badge markiert, die betroffene Übung zeigt den neuen Wert.
-- Das erste Training einer Übung setzt nur den Startwert und zählt noch nicht als PR.
-- PRs werden immer aus den gespeicherten Workouts berechnet. Löschst du ein Workout, passen sie sich automatisch an.
+- If you break a record when saving, **"New PR"** appears.
+- In the **History**, workouts with a PR are marked with a gold **PR** badge, and the affected exercise shows the new value.
+- The first session of an exercise only sets the baseline and does not count as a PR yet.
+- PRs are always calculated from the saved workouts. If you delete a workout, they adjust automatically.
 
-PRs findest du im laufenden Workout, unter **Stats** und in der **Übungsbibliothek**.
+You can find PRs in the running workout, under **Stats** and in the **Exercise library**.
 
-### Daten & Backup
+### Data & Backup
 
-Über das Daten-Symbol oben rechts in der Kopfzeile:
+Via the data icon in the top right of the header:
 
-- **Daten exportieren**: speichert alle Workouts, Routinen (inklusive Symbole und Bilder) und Übungen in einer Datei `waytoobsidian-backup-JJJJ-MM-TT.json`. Auf dem iPhone öffnet sich das Teilen-Menü, z. B. „In Dateien sichern“ oder iCloud Drive. Am Computer wird die Datei heruntergeladen.
-- **Daten importieren**: Backup-Datei auswählen (auch ältere Backups aus der Zeit als „IronArm“). WayToObsidian prüft die Datei und zeigt, wie viele Workouts, Routinen und Übungen sie enthält. Danach wählst du:
-  - **Zusammenführen**: ergänzt nur, was auf dem Gerät fehlt. Vorhandene Daten bleiben unverändert.
-  - **Alles ersetzen**: ersetzt alle Daten auf dem Gerät durch das Backup, nach einer Sicherheitsabfrage.
-- Angezeigt wird außerdem das Datum des letzten Exports.
+- **Export data**: saves all workouts, routines (including icons and images) and exercises to a file `waytoobsidian-backup-YYYY-MM-DD.json`. On the iPhone, the share sheet opens, e.g. "Save to Files" or iCloud Drive. On a computer, the file is downloaded.
+- **Import data**: choose a backup file (including older backups from the "IronArm" days). WayToObsidian checks the file and shows how many workouts, routines and exercises it contains. Then you choose:
+  - **Merge**: only adds what is missing on the device. Existing data stays unchanged.
+  - **Replace all**: replaces all data on the device with the backup, after a confirmation prompt.
+- The date of the last export is also shown.
 
-Damit kannst du Daten sichern, auf ein neues Gerät umziehen oder bei einem Wechsel des Hostings bzw. Servers mitnehmen. Die Daten liegen weiterhin nur lokal. Ohne Export gibt es kein Backup.
+This lets you back up your data, move to a new device, or take it with you when switching hosting or servers. The data is still stored only locally. Without an export, there is no backup.
 
-### Trainingshistorie
+### Training History
 
-- Alle Workouts mit allen Übungen, neuestes Datum zuerst
-- Pro Workout: Datum, Anzahl der Übungen und Gesamtgewicht
-- Pro Übung: Arm (falls einseitig), alle Sätze und ggf. der neue PR
-- Ein Tipp öffnet die Details. Dort lässt sich das Workout auch löschen (mit Sicherheitsabfrage).
+- All workouts with all exercises, newest first
+- Per workout: date, number of exercises and total volume
+- Per exercise: arm (if unilateral), all sets and the new PR if any
+- Tapping opens the details. The workout can also be deleted there (with a confirmation prompt).
 
-### Fortschritt (Stats)
+### Progress (Stats)
 
-- Kraftverlauf pro Übung als Diagramm (schwerster Satz je Training)
-- Arm-Umschalter (Alle, Rechts, Links) nur bei Rechts/Links-Übungen
-- Bei Halte-Übungen ohne Gewicht zeigt das Diagramm die Haltezeit
-- PR-Gewicht und letztes Gewicht
-- Liste aller persönlichen Rekorde
+- Strength progress per exercise as a chart (heaviest set per session)
+- Arm toggle (All, Right, Left) only for right/left exercises
+- For hold exercises without weight, the chart shows the hold time
+- PR weight and last weight
+- List of all personal records
 
-### Übungseinstellungen
+### Exercise Settings
 
-Jede Übung hat zwei Einstellungen. Du legst sie beim Erstellen fest und änderst sie jederzeit in der Übungsbibliothek (Übung antippen):
+Each exercise has two settings. You set them when creating the exercise and can change them at any time in the exercise library (tap the exercise):
 
-| Einstellung | Optionen | Standard |
+| Setting | Options | Default |
 |---|---|---|
-| Zähleinheit | *Wiederholungen* (kg + Wdh.) oder *Sekunden halten* (kg + Sek.) | Wiederholungen (Planks: Sekunden) |
-| Seiten | *Beidseitig* oder *Rechts / Links* | Armwrestling-Kategorien: Rechts / Links, alle anderen: Beidseitig |
+| Counting unit | *Reps* (kg + reps) or *Hold seconds* (kg + sec) | Reps (planks: seconds) |
+| Sides | *Bilateral* or *Right / Left* | Armwrestling categories: Right / Left, all others: Bilateral |
 
-Bei beidseitigen Übungen werden PRs ohne Arm-Unterscheidung geführt, bei Rechts/Links-Übungen getrennt pro Arm.
+For bilateral exercises, PRs are tracked without arm distinction; for right/left exercises, separately per arm.
 
-### Übungsbibliothek
+### Exercise Library
 
-- Über 100 vordefinierte Übungen, darunter viele **Kabelzug-Varianten** (Suche nach „Kabel“):
+- Over 100 predefined exercises, including many **cable variations** (search for "Kabel", German for cable):
 
-| Kategorie | Beispiele |
+| Category | Examples |
 |---|---|
-| Armwrestling | Pronation, Supination, Cupping, Rising, Back/Side Pressure – jeweils auch am Kabel; Wrist Curls, Reverse Wrist Curls, Finger Curls, Pinch Grip, Wrist Roller, Dead Hang |
-| Brust | Bankdrücken (flach, schräg, negativ), Kurzhantel-Varianten, Brustpresse, Butterfly, Kurzhantel-Fliegende, Cable Flys, Kabel-Crossover, Kabel-Fliegende von oben/unten, Dips, Liegestütze |
-| Rücken | Kreuzheben, Klimmzüge, Latzug (breit/eng), Rudern (Langhantel, Kurzhantel, T-Bar, Maschine, Kabel), Kabel-Pullover, **Hyperextensions**, Shrugs |
-| Schultern | Schulterdrücken, Arnold Press, Schulterpresse, Seitheben (auch am Kabel), Frontheben, Reverse Flys (auch am Kabel), Face Pulls, Aufrechtes Rudern |
-| Bizeps | Langhantel-, SZ-, Kurzhantel-, Hammer-, Schrägbank-, Scott-, Konzentrations-, Spider- und Reverse Curls, Kabel-Curls, Kabel-Hammer Curls, Bayesian Curls, Bizepsmaschine |
-| Trizeps | Trizepsdrücken am Kabel (Seil/Stange), Overhead-Trizepsdrücken (Kabel/Kurzhantel), French Press, Skull Crusher, Kickbacks (auch am Kabel), Enges Bankdrücken, Dips |
-| Beine | Kniebeugen, Frontkniebeugen, Beinpresse, Hackenschmidt, Ausfallschritte, Bulgarian Split Squats, Rumänisches Kreuzheben, Hip Thrusts, Beinstrecker/-beuger, Ab-/Adduktoren, Kabel-Glute-Kickbacks, Wadenheben |
-| Bauch | Crunches, Kabel-Crunches, Beinheben hängend, Russian Twists, Ab-Roller, Planks, Seitstütz |
+| Armwrestling | Pronation, Supination, Cupping, Rising, Back/Side Pressure – each also on the cable; Wrist Curls, Reverse Wrist Curls, Finger Curls, Pinch Grip, Wrist Roller, Dead Hang |
+| Chest | Bench press (flat, incline, decline), dumbbell variations, chest press, pec deck, dumbbell flys, cable flys, cable crossover, high/low cable flys, dips, push-ups |
+| Back | Deadlift, pull-ups, lat pulldown (wide/close), rows (barbell, dumbbell, T-bar, machine, cable), cable pullover, **hyperextensions**, shrugs |
+| Shoulders | Overhead press, Arnold press, shoulder press machine, lateral raises (also on the cable), front raises, reverse flys (also on the cable), face pulls, upright rows |
+| Biceps | Barbell, EZ-bar, dumbbell, hammer, incline, preacher, concentration, spider and reverse curls, cable curls, cable hammer curls, Bayesian curls, biceps machine |
+| Triceps | Cable triceps pushdown (rope/bar), overhead triceps extension (cable/dumbbell), French press, skull crushers, kickbacks (also on the cable), close-grip bench press, dips |
+| Legs | Squats, front squats, leg press, hack squat, lunges, Bulgarian split squats, Romanian deadlift, hip thrusts, leg extension/curl, abductors/adductors, cable glute kickbacks, calf raises |
+| Abs | Crunches, cable crunches, hanging leg raises, Russian twists, ab roller, planks, side planks |
 
-- **Neue Standard-Übungen werden bei Updates automatisch ergänzt.** Eigene Übungen und geänderte Einstellungen bleiben dabei erhalten. Übungen aus der früheren Sammelkategorie „Arme“ werden dabei auf „Bizeps“ und „Trizeps“ verteilt.
-- Nach Kategorien gruppiert und mit **Suchfeld**
-- **Übung antippen** öffnet ihre Einstellungen (Kategorie, Zähleinheit, Seiten), den Weg zur Statistik und das Löschen. Workouts und Routinen bleiben beim Löschen erhalten.
-- Eigene Übungen über den runden **+**-Button anlegen
-- PR pro Übung direkt in der Liste, bei einseitigen Übungen getrennt nach rechts (R) und links (L)
+- **New default exercises are added automatically on updates.** Your own exercises and changed settings are preserved. Exercises from the former combined category "Arms" are split into "Biceps" and "Triceps".
+- Grouped by category and with a **search field**
+- **Tapping an exercise** opens its settings (category, counting unit, sides), a link to its stats and the delete option. Workouts and routines are kept when an exercise is deleted.
+- Create your own exercises via the round **+** button
+- PR per exercise directly in the list, for unilateral exercises separated into right (R) and left (L)
 
 ---
 
-## 4. Technologie
+## 4. Technology
 
-| Technik | Zweck |
+| Technology | Purpose |
 |---|---|
-| HTML5 | Struktur der Anwendung |
-| CSS3 | Gestaltung, responsives Layout, Safe-Area-Unterstützung für iPhones mit Notch |
-| JavaScript | Logik und Interaktion (ohne Frameworks) |
-| LocalStorage | Lokale Speicherung der Trainingsdaten |
-| Service Worker | Offline-Betrieb und automatische Updates |
-| Web App Manifest | Installation auf dem Home-Bildschirm |
+| HTML5 | Application structure |
+| CSS3 | Styling, responsive layout, safe-area support for iPhones with a notch |
+| JavaScript | Logic and interaction (no frameworks) |
+| LocalStorage | Local storage of training data |
+| Service Worker | Offline operation and automatic updates |
+| Web App Manifest | Installation on the home screen |
 
-Es werden **keine externen Bibliotheken** benötigt.
+**No external libraries** are required.
 
-### Gespeicherte Daten (LocalStorage)
+### Stored Data (LocalStorage)
 
-| Schlüssel | Inhalt |
+| Key | Content |
 |---|---|
-| `it_sessions` | gespeicherte Workouts mit allen Übungen und Sätzen |
-| `it_routines` | Routinen |
-| `it_exercises` | Übungsbibliothek |
-| `it_active` | das gerade laufende Workout (Zwischenspeicher) |
-| `it_workouts` | Daten aus Version 1.0/1.1 (nur noch als Backup) |
-| `it_defaults_version` | Version der Standard-Übungsliste |
-| `it_last_export` | Datum des letzten Exports |
+| `it_sessions` | saved workouts with all exercises and sets |
+| `it_routines` | routines |
+| `it_exercises` | exercise library |
+| `it_active` | the currently running workout (temporary storage) |
+| `it_workouts` | data from version 1.0/1.1 (kept only as a backup) |
+| `it_defaults_version` | version of the default exercise list |
+| `it_last_export` | date of the last export |
 
-Beim ersten Start ab Version 1.2 werden die alten Einträge aus `it_workouts` automatisch übernommen und pro Trainingstag zu einem Workout „Training“ zusammengefasst. Die alten Daten bleiben unverändert als Backup erhalten.
+On the first launch of version 1.2 or later, the old entries from `it_workouts` are migrated automatically and grouped per training day into a workout named "Training". The old data is kept unchanged as a backup.
 
-### Farbkonzept
+### Color Concept
 
-Die App soll angenehm für die Augen sein, schön aussehen und nicht überreizen: dunkle Flächen mit leichtem Aubergine-Ton, ein sanftes Flieder als einziger Akzent und weiche Signalfarben.
+The app should be easy on the eyes, look good and not be overstimulating: dark surfaces with a slight aubergine tint, a soft lilac as the only accent, and gentle signal colors.
 
-| Rolle | Farbe | Einsatz |
+| Role | Color | Usage |
 |---|---|---|
-| Hintergrund | `#121018` | Karten in `#1A1722`, Eingabefelder `#231F2D` |
-| Akzent | `#B9A5E6` (Flieder) | Buttons (mit dunkler Schrift), aktive Tabs, Diagramme |
-| Bestleistung | `#E6C88F` (weiches Gold) | PRs und Rekorde |
-| Warnung | `#E2878F` (gedämpftes Rosé) | Löschen und Verwerfen |
-| Text | `#ECE8F4` | gedämpft `#9A93A8` |
+| Background | `#121018` | Cards in `#1A1722`, input fields `#231F2D` |
+| Accent | `#B9A5E6` (lilac) | Buttons (with dark text), active tabs, charts |
+| Personal best | `#E6C88F` (soft gold) | PRs and records |
+| Warning | `#E2878F` (muted rose) | Delete and discard |
+| Text | `#ECE8F4` | muted `#9A93A8` |
 
-Routinen-Symbole gibt es in Flieder, Rosé, Blau, Salbei, Gold und Grau.
+Routine icons are available in lilac, rose, blue, sage, gold and grey.
 
-Alle Farben sind als CSS-Variablen am Anfang von `index.html` definiert (`--accent`, `--gold`, `--danger` …). Das App-Symbol (`icon.svg` und die PNGs) nutzt dieselben Farben und muss bei Farbänderungen mit angepasst werden. Die App verwendet bewusst keine Emojis, sondern schlichte Icons.
+All colors are defined as CSS variables at the top of `index.html` (`--accent`, `--gold`, `--danger` …). The app icon (`icon.svg` and the PNGs) uses the same colors and must be updated along with any color changes. The app deliberately uses no emojis, only simple icons.
 
-### Optimierungen für das iPhone
+### iPhone Optimizations
 
-- Kein automatisches Hineinzoomen beim Antippen von Eingabefeldern
-- Passende Zifferntastatur für Gewicht (mit Komma), Wiederholungen und Sekunden
-- Scharfe Diagramme auf Retina-Displays
-- Abstand zu Notch und Home-Leiste
-- PNG-Symbol (`apple-touch-icon.png`) für den Home-Bildschirm, da iOS keine SVG-Symbole nutzt
-- Es wird nur die gerade sichtbare Seite neu aufgebaut
+- No automatic zoom when tapping input fields
+- Appropriate numeric keyboard for weight (with decimal comma), reps and seconds
+- Sharp charts on Retina displays
+- Spacing for the notch and home indicator
+- PNG icon (`apple-touch-icon.png`) for the home screen, since iOS doesn't use SVG icons
+- Only the currently visible page is re-rendered
 
 ---
 
-## 5. Projektstruktur
+## 5. Project Structure
 
 ```text
 waytoobsidian/
-├── index.html            Hauptanwendung (HTML, CSS und JavaScript)
-├── manifest.json         PWA-Konfiguration
-├── sw.js                 Service Worker (Offline-Caching & Updates)
-├── icon.svg              App-Symbol (Vektor)
-├── apple-touch-icon.png  App-Symbol für den iPhone-Home-Bildschirm (180×180)
-├── icon-192.png          App-Symbol für das Manifest (192×192)
-├── icon-512.png          App-Symbol für das Manifest (512×512)
-├── favicon.ico           Browser-Symbol (32×32, für alle Browser)
-├── favicon-32.png        Browser-Symbol als PNG
-├── robots.txt            Suchmaschinen aussperren
-├── _headers              Netlify-Header (noindex für alle Dateien)
-└── readme.md             Projektdokumentation
+├── index.html            Main application (HTML, CSS and JavaScript)
+├── manifest.json         PWA configuration
+├── sw.js                 Service worker (offline caching & updates)
+├── icon.svg              App icon (vector)
+├── apple-touch-icon.png  App icon for the iPhone home screen (180×180)
+├── icon-192.png          App icon for the manifest (192×192)
+├── icon-512.png          App icon for the manifest (512×512)
+├── favicon.ico           Browser icon (32×32, for all browsers)
+├── favicon-32.png        Browser icon as PNG
+├── robots.txt            Block search engines
+├── _headers              Netlify headers (noindex for all files)
+└── readme.md             Project documentation
 ```
 
 ---
 
 ## 6. Installation
 
-### Hosting über Netlify
+### Hosting on Netlify
 
-1. Alle Projektdateien in einem gemeinsamen Ordner speichern.
-2. <https://app.netlify.com/drop> öffnen.
-3. Den Projektordner hochladen.
-4. Die erzeugte Website-Adresse auf dem iPhone in **Safari** öffnen.
-5. **Teilen** → **Zum Home-Bildschirm** auswählen.
+1. Save all project files in a single folder.
+2. Open <https://app.netlify.com/drop>.
+3. Upload the project folder.
+4. Open the generated website address on the iPhone in **Safari**.
+5. Select **Share** → **Add to Home Screen**.
 
-Danach startest du WayToObsidian über das eigene App-Symbol.
+After that, you launch WayToObsidian via its own app icon.
 
-> **Wichtig:** Die Seite muss **öffentlich erreichbar** sein (Netlify → *Site configuration* → *Access & security* → *Visitor access / Site protection* → öffentlich). Ist ein Passwort- oder Team-Schutz aktiv, laden Browser und iPhone die Icons und das Manifest ohne Login und bekommen nur die Login-Seite. Dann erscheint statt des Symbols nur der Buchstabe „I“, und auch Offline-Betrieb und Installation funktionieren nicht zuverlässig.
+> **Important:** The site must be **publicly accessible** (Netlify → *Site configuration* → *Access & security* → *Visitor access / Site protection* → public). If password or team protection is active, the browser and iPhone load the icons and manifest without logging in and only receive the login page. In that case only the letter "I" appears instead of the icon, and offline mode and installation won't work reliably either.
 
-### Updates veröffentlichen
+### Publishing Updates
 
-1. Bei Änderungen an den App-Dateien die Versionsnummer in `sw.js` erhöhen (aktuell `waytoobsidian-v15`).
-2. Den Ordner erneut bei Netlify hochladen.
-3. Die App lädt die neue Version automatisch beim nächsten Start mit Internetverbindung.
+1. When changing app files, increase the version number in `sw.js` (currently `waytoobsidian-v15`).
+2. Upload the folder to Netlify again.
+3. The app loads the new version automatically on the next launch with an internet connection.
 
-Bei einem geänderten App-Symbol alle PNG-Größen (`apple-touch-icon.png`, `icon-192.png`, `icon-512.png`) neu aus `icon.svg` erzeugen. Im Manifest stehen bewusst nur PNG-Icons, weil iOS keine SVG-Icons für den Home-Bildschirm verwendet. Das Home-Bildschirm-Icon und das Favicon sind zusätzlich als Base64-Daten direkt in `index.html` eingebettet (funktioniert auch bei zugriffsgeschützten Seiten) und müssen bei Icon-Änderungen dort ebenfalls neu eingesetzt werden. Sonst zeigt das iPhone nur den Anfangsbuchstaben „I“.
+If the app icon changes, regenerate all PNG sizes (`apple-touch-icon.png`, `icon-192.png`, `icon-512.png`) from `icon.svg`. The manifest deliberately lists only PNG icons, because iOS doesn't use SVG icons for the home screen. The home screen icon and the favicon are also embedded directly in `index.html` as Base64 data (this works even on access-protected sites) and must be replaced there as well when the icon changes. Otherwise the iPhone only shows the initial letter "I".
 
-Ein geändertes App-Symbol übernimmt iOS erst, wenn du die App vom Home-Bildschirm entfernst und neu hinzufügst. Deine Trainingsdaten bleiben dabei erhalten.
-
----
-
-## 7. Offline-Funktionalität
-
-Der Service Worker speichert alle App-Dateien zwischen. Offline funktioniert:
-
-- App starten
-- Workouts aufzeichnen und Routinen starten
-- Routinen und Übungen anlegen
-- Historie, Fortschritt und PRs ansehen
-- Daten lokal speichern
-
-Ist eine Internetverbindung vorhanden, lädt WayToObsidian automatisch die neueste Version. Ohne Verbindung startet die zwischengespeicherte Version.
-
-Die erste Einrichtung braucht eine Internetverbindung.
-
-> **Wichtig:** Die Trainingsdaten liegen im LocalStorage von Safari. Wenn du die Website-Daten in Safari löschst, werden auch deine Trainingsdaten entfernt. WayToObsidian bittet den Browser zwar, die Daten dauerhaft aufzubewahren, eine Cloud-Synchronisierung gibt es aber nicht.
+iOS only picks up a changed app icon after you remove the app from the home screen and add it again. Your training data is preserved.
 
 ---
 
-## 8. Datenschutz
+## 7. Offline Functionality
 
-- **Nicht in Suchmaschinen:** `noindex` im Seitenkopf, `robots.txt` und ein `X-Robots-Tag`-Header (`_headers`) verhindern, dass Google & Co. die Seite aufnehmen. Nur wer den Link kennt, findet die App.
+The service worker caches all app files. The following works offline:
 
-- Kein Benutzerkonto nötig
-- Keine Übertragung von Trainingsdaten an einen Server
-- Netlify stellt nur die App-Dateien bereit
+- Launching the app
+- Logging workouts and starting routines
+- Creating routines and exercises
+- Viewing history, progress and PRs
+- Saving data locally
 
----
+When an internet connection is available, WayToObsidian automatically loads the latest version. Without a connection, the cached version starts.
 
-## 9. Geplante Erweiterungen
+The initial setup requires an internet connection.
 
-- Automatische Datensicherung / Cloud-Synchronisierung
-- Körpergewicht dokumentieren
-- Rest-Timer zwischen den Sätzen
-- Trainingsnotizen
-- Kategorien und Filter für Übungen
-- Geschätztes 1RM (One-Rep-Max) als zusätzlicher PR
+> **Important:** Training data is stored in Safari's LocalStorage. If you clear website data in Safari, your training data will be removed as well. WayToObsidian asks the browser to keep the data persistently, but there is no cloud sync.
 
 ---
 
-## 10. Projektziel
+## 8. Privacy
 
-WayToObsidian soll langfristig ein persönliches und übersichtliches Trainingssystem für Armwrestling und klassisches Krafttraining werden.
+- **Not in search engines:** `noindex` in the page head, `robots.txt` and an `X-Robots-Tag` header (`_headers`) prevent Google & co. from indexing the site. Only people who know the link can find the app.
 
-Im Fokus stehen einfache Bedienung, zuverlässige Datenspeicherung und nachvollziehbare Kraftentwicklung.
+- No user account required
+- No training data is sent to a server
+- Netlify only serves the app files
+
+---
+
+## 9. Planned Features
+
+- Automatic backup / cloud sync
+- Body weight tracking
+- Rest timer between sets
+- Training notes
+- Categories and filters for exercises
+- Estimated 1RM (one-rep max) as an additional PR
+
+---
+
+## 10. Project Goal
+
+In the long term, WayToObsidian is meant to become a personal, clear training system for armwrestling and classic strength training.
+
+The focus is on simple operation, reliable data storage and traceable strength development.
 
 **WAYTOOBSIDIAN – TRACK YOUR STRENGTH.**
