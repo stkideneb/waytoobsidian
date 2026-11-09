@@ -311,12 +311,32 @@ function showImportSheet() {
     </div>
 
     <button class="full spaced" onclick="applyImport('merge')">Zusammenführen</button>
-    <p class="muted small-text">Ergänzt nur, was auf diesem Gerät fehlt. Vorhandene Daten bleiben unverändert.</p>
+    <p class="muted small-text">Ergänzt, was auf diesem Gerät fehlt, und übernimmt geänderte Routinen und Übungen aus dem Backup (außer sie wurden hier später geändert). Hier gelöschte Einträge kommen dabei zurück.</p>
 
     <button class="danger full spaced" onclick="applyImport('replace')">Alles ersetzen</button>
     <p class="muted small-text">Löscht alle Workouts, Routinen und Übungen auf diesem Gerät und übernimmt das Backup.</p>
 
     <button class="secondary full" onclick="closeSheet()">Abbrechen</button>`);
+}
+
+// Einträge aus dem Backup übernehmen: fehlende ergänzen, vorhandene ersetzen,
+// wenn die Backup-Version nicht älter ist als die auf diesem Gerät.
+function mergeByKey(local, incoming, keyOf) {
+  const index = new Map(local.map((item, i) => [keyOf(item), i]));
+  let added = 0;
+  let updated = 0;
+  for (const item of incoming) {
+    const i = index.get(keyOf(item));
+    if (i === undefined) {
+      local.push(item);
+      added++;
+    } else if ((item.updatedAt || 0) >= (local[i].updatedAt || 0) &&
+               JSON.stringify(item) !== JSON.stringify(local[i])) {
+      local[i] = item;
+      updated++;
+    }
+  }
+  return { added, updated };
 }
 
 async function applyImport(mode) {
@@ -344,23 +364,19 @@ async function applyImport(mode) {
     toast("Backup übernommen");
   } else {
     const sessionIds = new Set(sessions.map((s) => s.id));
-    const routineIds = new Set(routines.map((r) => r.id));
-    const exerciseNames = new Set(exercises.map((e) => e.name.toLowerCase()));
-
     const newSessions = p.sessions.filter((s) => !sessionIds.has(s.id));
-    const newRoutines = p.routines.filter((r) => !routineIds.has(r.id));
-    const newExercises = p.exercises.filter((e) => !exerciseNames.has(e.name.toLowerCase()));
-
     sessions.push(...newSessions);
-    routines.push(...newRoutines);
-    exercises.push(...newExercises);
+
+    const r = mergeByKey(routines, p.routines, (x) => x.id);
+    const e = mergeByKey(exercises, p.exercises, (x) => x.name.toLowerCase());
     adoptBackupCode(p.code);
     if (!store()) return;
 
-    const added = newSessions.length + newRoutines.length + newExercises.length;
-    toast(added
-      ? `Ergänzt: ${newSessions.length} Workouts, ${newRoutines.length} Routinen, ${newExercises.length} Übungen`
-      : "Alles war schon vorhanden", { duration: 3500 });
+    const parts = [];
+    if (newSessions.length) parts.push(`${newSessions.length} Workouts neu`);
+    if (r.added || r.updated) parts.push(`${r.added + r.updated} Routinen neu/aktualisiert`);
+    if (e.added || e.updated) parts.push(`${e.added + e.updated} Übungen neu/aktualisiert`);
+    toast(parts.length ? parts.join(", ") : "Alles war schon aktuell", { duration: 3500 });
   }
 
   pendingImport = null;

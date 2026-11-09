@@ -11,7 +11,8 @@ const STORAGE = {
   lastExport: "it_last_export",
   backupCode: "it_backup_code", // Schlüssel für das Online-Backup
   lastBackup: "it_last_backup", // Zeitpunkt des letzten Online-Backups
-  backupPending: "it_backup_pending" // Änderungen, die noch hochgeladen werden müssen
+  backupPending: "it_backup_pending", // Änderungen, die noch hochgeladen werden müssen
+  historyOrder: "it_history_order" // Sortierung der Historie (nur Anzeige)
 };
 
 const $ = (id) => document.getElementById(id);
@@ -54,7 +55,9 @@ function withDefaults(e) {
     name: e.name,
     category: e.category ?? "Other",
     mode: e.mode ?? (DEFAULT_HOLD.includes(e.name) ? "hold" : "reps"),
-    sided: e.sided ?? ARM_CATEGORIES.includes(e.category)
+    sided: e.sided ?? ARM_CATEGORIES.includes(e.category),
+    // Zeitpunkt der letzten Änderung (für das Zusammenführen von Backups)
+    ...(typeof e.updatedAt === "number" ? { updatedAt: e.updatedAt } : {})
   };
 }
 

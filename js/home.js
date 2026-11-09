@@ -27,8 +27,7 @@ function renderHome() {
        <h2>${safe(active.name)} läuft</h2>
        <button class="full" onclick="show('train')">Workout fortsetzen</button>`
     : `${top}
-       <h2>Bereit fürs Training?</h2>
-       <button class="full" onclick="startWorkout()">Workout starten</button>`;
+       <h2>Bereit fürs Training?</h2>`;
 
   const prMarks = computePRMarks();
   renderWeekPRs(prMarks);
@@ -42,8 +41,9 @@ function renderHome() {
   $("homeHistory").innerHTML = recent.length
     ? recent.map((s) => `
         <div class="list-item chevron" onclick="openSession(${s.id})">
+          ${sessionIconHTML(s)}
           <div class="grow">
-            <div><span class="title">${safe(s.name)}</span> <span class="muted">· ${fmtDateFriendly(s.date)}</span></div>
+            <div><span class="title">${safe(s.name)}</span> <span class="muted">· ${fmtDateFriendly(s.date)}${s.duration > 0 ? ` · ${fmtDuration(s.duration)}` : ""}</span></div>
             <div class="muted">${safe(summarize(s.exercises.map((e) => e.name)))}</div>
           </div>
         </div>`).join("")
@@ -207,7 +207,7 @@ function sessionDetailHTML(s, prMarks) {
 
 function sessionMeta(s) {
   const parts = [fmtDate(s.date), `${s.exercises.length} Übungen`, `${fmtNum(sessionVolume(s))} kg`];
-  if (s.duration) parts.push(`${Math.round(s.duration / 60)} min`);
+  if (s.duration) parts.push(fmtDuration(s.duration));
   return parts.join(" · ");
 }
 

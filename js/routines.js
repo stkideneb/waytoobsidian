@@ -266,6 +266,7 @@ function saveRoutine() {
     existing.exercises = [...routineDraft.exercises];
     existing.notes = notes;
     existing.icon = normalizeIcon(routineDraft.icon);
+    existing.updatedAt = Date.now();
     currentRoutineId = existing.id;
   } else {
     const routine = {
@@ -274,7 +275,8 @@ function saveRoutine() {
       description,
       exercises: [...routineDraft.exercises],
       notes,
-      icon: normalizeIcon(routineDraft.icon)
+      icon: normalizeIcon(routineDraft.icon),
+      updatedAt: Date.now()
     };
     routines.push(routine);
     currentRoutineId = routine.id;
@@ -298,6 +300,18 @@ async function deleteRoutine(id) {
   store();
   toast("Routine gelöscht");
   show(routineReturnPage);
+}
+
+// Sekunden -> "45 min" bzw. "1 h 05 min"
+function fmtDuration(seconds) {
+  const min = Math.max(1, Math.round(seconds / 60));
+  return min < 60 ? `${min} min` : `${Math.floor(min / 60)} h ${String(min % 60).padStart(2, "0")} min`;
+}
+
+// Symbol der Routine, mit der ein Workout gemacht wurde ("" bei freiem Training)
+function sessionIconHTML(s, size = "") {
+  const routine = s.routineId ? routines.find((r) => r.id === s.routineId) : null;
+  return routine ? routineIconHTML(routine.icon, size) : "";
 }
 
 function renderRoutinePage() {
@@ -327,9 +341,12 @@ function renderRoutinePage() {
   if (values.length) {
     const best = Math.max(...values.map((v) => v.value));
     const last = values.at(-1);
+    const timed = done.filter((s) => s.duration > 0);
+    const avg = timed.length ? timed.reduce((n, s) => n + s.duration, 0) / timed.length : 0;
     $("routineStats").innerHTML =
       `${values.length} Trainings · Bestwert <strong class="pr">${fmtNum(best)} kg</strong>` +
-      ` · Zuletzt <strong>${fmtNum(last.value)} kg</strong>`;
+      ` · Zuletzt <strong>${fmtNum(last.value)} kg</strong>` +
+      (avg ? ` · <span style="white-space:nowrap">Ø Dauer <strong>${fmtDuration(avg)}</strong></span>` : "");
   } else {
     $("routineStats").textContent = "Starte die Routine, um deinen Verlauf aufzuzeichnen.";
   }
@@ -339,7 +356,10 @@ function renderRoutinePage() {
   $("routineSessions").innerHTML = done.length
     ? [...done].reverse().map((s) => `
         <div class="list-item chevron" onclick="openSession(${s.id})">
-          <span class="grow">${fmtDateFriendly(s.date)}</span>
+          <div class="grow">
+            <div>${fmtDateFriendly(s.date)}</div>
+            ${s.duration > 0 ? `<div class="muted small-text">${fmtDuration(s.duration)}</div>` : ""}
+          </div>
           <strong>${fmtNum(sessionVolume(s))} kg</strong>
         </div>`).join("")
     : '<div class="empty">Noch keine Trainings mit dieser Routine.</div>';

@@ -3,26 +3,51 @@
    ========================================================= */
 const emptySet = () => ({ kg: "", reps: "", hold: "" });
 
-// Neue Übung im Workout:
-// - noch nie gemacht -> 1 Satz
-// - schon gemacht    -> so viele Sätze wie beim letzten Mal (Werte als Anhaltspunkte)
+const SIDES = ["Rechts", "Links"];
+
+// Leere Sätze für eine Seite: so viele wie beim letzten Mal (mind. 1)
+function emptySetsFor(name, arm) {
+  const last = lastEntryFor(name, arm);
+  return Array.from({ length: last ? Math.max(1, last.sets.length) : 1 }, emptySet);
+}
+
+// Rechts/Links-Übungen: ein Satz = rechter + linker Arm, darum gleich viele Sätze je Seite
+function evenSides(ex) {
+  const count = Math.max(1, ...ex.sides.map((side) => side.sets.length));
+  for (const side of ex.sides) {
+    while (side.sets.length < count) side.sets.push(emptySet());
+  }
+  return ex;
+}
+
+// Neue Übung im Workout. Werte werden je Seite getrennt erfasst:
+// - Rechts/Links-Übungen: Seiten "Rechts" und "Links", gleich viele Sätze
+// - beidseitige Übungen:  eine Seite "Beide"
 function makeWorkoutExercise(name) {
   const meta = exerciseMeta(name);
-  const lastAny = lastEntryFor(name);
-  const arm = meta.sided
-    ? (["Rechts", "Links"].includes(lastAny?.arm) ? lastAny.arm : "Rechts")
-    : "Beide";
-  const last = lastEntryFor(name, meta.sided ? arm : null);
-  const setCount = last ? Math.max(1, last.sets.length) : 1;
-
-  return {
+  return evenSides({
     name,
     category: meta.category,
     mode: meta.mode,
     sided: meta.sided,
-    arm,
-    sets: Array.from({ length: setCount }, emptySet)
-  };
+    sides: meta.sided
+      ? SIDES.map((arm) => ({ arm, sets: emptySetsFor(name, arm) }))
+      : [{ arm: "Beide", sets: emptySetsFor(name, null) }]
+  });
+}
+
+// Laufende Workouts aus der alten Version (eine Satzliste + Arm-Umschalter) umwandeln
+function upgradeWorkoutExercise(ex) {
+  if (Array.isArray(ex.sides)) return evenSides(ex);
+  const { sided } = workoutExerciseMeta(ex);
+  const sets = Array.isArray(ex.sets) && ex.sets.length ? ex.sets : [emptySet()];
+  const usedArm = ex.arm === "Links" ? "Links" : "Rechts";
+  ex.sides = sided
+    ? SIDES.map((arm) => ({ arm, sets: arm === usedArm ? sets : emptySetsFor(ex.name, arm) }))
+    : [{ arm: "Beide", sets }];
+  delete ex.sets;
+  delete ex.arm;
+  return evenSides(ex);
 }
 
 // Einstellungen einer Übung im Workout (ältere Workouts haben sie noch nicht gespeichert)
@@ -69,41 +94,57 @@ async function addExerciseToWorkout() {
   $("activeExercises").lastElementChild?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+// Eingabefelder (kg + Wdh./Sek.) für einen Satz einer Seite
+function setInputsHTML(ex, i, k, j, unit, hint, label) {
+  const s = ex.sides[k].sets[j];
+  return `
+    <input type="number" inputmode="decimal" min="0" step=".5" data-ex="${i}" data-side="${k}" data-set="${j}" data-field="kg"
+           value="${safe(s.kg)}" placeholder="${hint.kg || "kg"}" aria-label="Gewicht ${label}">
+    <input type="number" inputmode="numeric" min="0" step="1" data-ex="${i}" data-side="${k}" data-set="${j}" data-field="${unit.field}"
+           value="${safe(s[unit.field])}" placeholder="${hint[unit.field] || unit.short}" aria-label="${unit.label} ${label}">`;
+}
+
+// Anhaltspunkt: gleicher Satz vom letzten Mal, sonst letzter Satz von damals
+const hintFor = (last, j) => last?.sets[j] ?? last?.sets.at(-1) ?? {};
+
+function setRowsHTML(ex, i, unit) {
+  const count = ex.sides[0].sets.length;
+  const removeBtn = (j) =>
+    `<button type="button" class="set-remove" data-action="remove-set" data-ex="${i}" data-set="${j}" aria-label="Satz ${j + 1} entfernen">✕</button>`;
+
+  // Beidseitig: eine Zeile pro Satz
+  if (ex.sides.length === 1) {
+    const last = lastEntryFor(ex.name, null);
+    return `
+      <div class="sethead"><span>Satz</span><span>kg</span><span>${unit.short}</span><span></span></div>
+      ${Array.from({ length: count }, (_, j) => `
+        <div class="setrow">
+          <span class="num">${j + 1}</span>
+          ${setInputsHTML(ex, i, 0, j, unit, hintFor(last, j), `Satz ${j + 1}`)}
+          ${removeBtn(j)}
+        </div>`).join("")}`;
+  }
+
+  // Rechts/Links: pro Satz eine Zeile R und eine Zeile L, Werte getrennt
+  const lasts = ex.sides.map((side) => lastEntryFor(ex.name, side.arm));
+  return `
+    <div class="sethead paired"><span>Satz</span><span></span><span>kg</span><span>${unit.short}</span><span></span></div>
+    ${Array.from({ length: count }, (_, j) => `
+      <div class="set-pair">
+        <span class="num">${j + 1}</span>
+        ${ex.sides.map((side, k) => `
+          <span class="side-tag side-${side.arm === "Rechts" ? "r" : "l"}" title="${side.arm}" aria-hidden="true">${side.arm[0]}</span>
+          ${setInputsHTML(ex, i, k, j, unit, hintFor(lasts[k], j), `Satz ${j + 1} ${side.arm.toLowerCase()}`)}`).join("")}
+        ${removeBtn(j)}
+      </div>`).join("")}`;
+}
+
 function exerciseBlockHTML(ex, i) {
-  const { mode, sided } = workoutExerciseMeta(ex);
+  upgradeWorkoutExercise(ex);
+  const { mode } = workoutExerciseMeta(ex);
   const unit = MODES[mode];
-  const arm = sided ? ex.arm : null;
-  const last = lastEntryFor(ex.name, arm);
-  const pr = personalBest(entriesFor(ex.name, arm));
   // Notiz aus der Routine, mit der das Workout gestartet wurde
   const note = routineNote(routines.find((r) => r.id === active?.routineId), ex.name);
-
-  const info = last
-    ? `<div class="muted small-text">Letztes Mal · ${fmtDateFriendly(last.date)}</div>
-       <div class="muted">${last.sets.map(formatSet).join(" · ")}</div>
-       <div class="muted">Bestwerte: ${formatPRLabeled(pr)}</div>
-       <button class="link" data-action="copy" data-ex="${i}">Werte übernehmen</button>`
-    : `<div class="muted">Erstes Training${sided ? ` (${ex.arm})` : ""}. Dein Ergebnis wird zum ersten Bestwert.</div>`;
-
-  const rows = ex.sets.map((s, j) => {
-    // Anhaltspunkt: gleicher Satz vom letzten Mal, sonst letzter Satz von damals
-    const hint = last?.sets[j] ?? last?.sets.at(-1) ?? {};
-    return `
-      <div class="setrow">
-        <span class="num">${j + 1}</span>
-        <input type="number" inputmode="decimal" min="0" step=".5" data-ex="${i}" data-set="${j}" data-field="kg"
-               value="${safe(s.kg)}" placeholder="${hint.kg || "kg"}" aria-label="Gewicht Satz ${j + 1}">
-        <input type="number" inputmode="numeric" min="0" step="1" data-ex="${i}" data-set="${j}" data-field="${unit.field}"
-               value="${safe(s[unit.field])}" placeholder="${hint[unit.field] || unit.short}" aria-label="${unit.label} Satz ${j + 1}">
-        <button type="button" data-action="remove-set" data-ex="${i}" data-set="${j}" aria-label="Satz entfernen">✕</button>
-      </div>`;
-  }).join("");
-
-  const armToggle = sided
-    ? `<div class="seg">
-         ${["Rechts", "Links"].map((a) => `<button class="${a === ex.arm ? "on" : ""}" data-action="arm" data-arm="${a}" data-ex="${i}">${a}</button>`).join("")}
-       </div>`
-    : "";
 
   return `
     <div class="card">
@@ -117,12 +158,7 @@ function exerciseBlockHTML(ex, i) {
 
       ${note ? `<div class="ex-note in-workout">${safe(note)}</div>` : ""}
 
-      ${armToggle}
-
-      <div class="info">${info}</div>
-
-      <div class="sethead"><span>Satz</span><span>kg</span><span>${unit.short}</span><span></span></div>
-      ${rows}
+      ${setRowsHTML(ex, i, unit)}
       <button class="secondary small full" data-action="add-set" data-ex="${i}">+ Satz</button>
     </div>`;
 }
@@ -150,9 +186,9 @@ function renderTrain() {
 
 // Eingaben in den Sätzen direkt ins laufende Workout übernehmen
 $("activeExercises").addEventListener("input", (event) => {
-  const { ex, set, field } = event.target.dataset;
+  const { ex, side, set, field } = event.target.dataset;
   if (!active || set === undefined || !field) return;
-  active.exercises[Number(ex)].sets[Number(set)][field] = event.target.value;
+  active.exercises[Number(ex)].sides[Number(side)].sets[Number(set)][field] = event.target.value;
   saveActiveSoon();
 });
 
@@ -164,14 +200,12 @@ $("activeExercises").addEventListener("click", async (event) => {
   const ex = active.exercises[exIndex];
 
   switch (button.dataset.action) {
-    case "arm":
-      ex.arm = button.dataset.arm;
-      break;
-    case "add-set":
-      ex.sets.push(emptySet());
+    case "add-set": // bei Rechts/Links für beide Arme
+      ex.sides.forEach((side) => side.sets.push(emptySet()));
       break;
     case "remove-set":
-      ex.sets.splice(Number(button.dataset.set), 1);
+      ex.sides.forEach((side) => side.sets.splice(Number(button.dataset.set), 1));
+      evenSides(ex); // mindestens ein Satz bleibt
       break;
     case "remove-ex": {
       const ok = await ask({
@@ -184,13 +218,6 @@ $("activeExercises").addEventListener("click", async (event) => {
       active.exercises.splice(exIndex, 1);
       break;
     }
-    case "copy": {
-      const last = lastEntryFor(ex.name, workoutExerciseMeta(ex).sided ? ex.arm : null);
-      if (!last) return;
-      ex.sets = last.sets.map((s) => ({ kg: s.kg || "", reps: s.reps || "", hold: s.hold || "" }));
-      toast("Werte übernommen");
-      break;
-    }
     default:
       return;
   }
@@ -200,21 +227,24 @@ $("activeExercises").addEventListener("click", async (event) => {
 });
 
 async function finishWorkout() {
+  // Jede Seite wird ein eigener Eintrag (Rechts / Links / Beide), wie bisher gespeichert,
+  // damit Verlauf, PRs und Statistik pro Arm getrennt bleiben. Leere Seiten fallen weg.
   const done = active.exercises
-    .map((ex) => {
-      const { mode, sided } = workoutExerciseMeta(ex);
-      return {
+    .flatMap((ex) => {
+      upgradeWorkoutExercise(ex);
+      const { mode } = workoutExerciseMeta(ex);
+      return ex.sides.map((side) => ({
         name: ex.name,
         category: ex.category,
-        arm: sided ? ex.arm : "Beide",
-        sets: ex.sets
+        arm: side.arm,
+        sets: side.sets
           .map((s) => ({
             kg: Number(s.kg) || 0,
             reps: mode === "reps" ? Number(s.reps) || 0 : 0,
             hold: mode === "hold" ? Number(s.hold) || 0 : 0
           }))
           .filter((s) => s.kg || s.reps || s.hold)
-      };
+      }));
     })
     .filter((ex) => ex.sets.length);
 
@@ -231,7 +261,7 @@ async function finishWorkout() {
     const oldPR = personalBest(previous);
     const current = personalBest([ex]);
     const beaten = PR_KEYS.filter((k) => current[k] > oldPR[k]);
-    if (beaten.length) newPRs.push(`${ex.name} ${formatPR(current, beaten)}`);
+    if (beaten.length) newPRs.push(`${ex.name}${ex.arm === "Beide" ? "" : ` ${ex.arm.toLowerCase()}`} ${formatPR(current, beaten)}`);
   }
 
   const session = {

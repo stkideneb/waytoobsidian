@@ -49,7 +49,7 @@ How the app is structured:
 
 ### Home Screen
 
-- **Greeting** with a large **Start workout** button. If a workout is already running, it says **Resume workout** instead.
+- **Greeting** with the streak flame. If a workout is running, a **Resume workout** button appears. Empty workouts are started in the *Training* tab.
 - **Streak flame**: top right in the greeting card, a small flame with the number of consecutive days with at least one workout. Today counts as soon as you have trained; without a workout today, the streak continues from yesterday until the day is over. No streak, no flame. The flame changes color with the streak length:
 
   | Streak | Flame |
@@ -82,12 +82,10 @@ The **elapsed time** is shown at the top of the workout. It is stored as the tra
 
 For each exercise in the workout you see:
 
-- your **last session** of this exercise with all sets
-- your **PRs** for this exercise
 - the values from last time as **grey placeholders** in the input fields
-- **"Apply values"**: fills in the sets from last time directly
+- the routine's **note** for this exercise, if there is one
 
-**Arm selection:** Only exercises set to *Right / Left* show a toggle for the right and left arm. WayToObsidian remembers the arm trained last. Bilateral exercises such as bench press or squats have no arm selection.
+**Right and left arm:** For exercises set to *Right / Left*, one set means both arms. Each set has an **R** row and an **L** row with their own kg and rep/second fields and their own grey hints from last time. A single **"+ Set"** adds a set for both arms, and ✕ removes the whole set. The values are tracked independently and saved as separate entries per arm, so history, PRs and stats stay per arm. An arm without any entered values is not saved (e.g. if you only trained one arm). Bilateral exercises such as bench press or squats show one row per set.
 
 The running workout is saved automatically in the background, so it isn't lost if you close the app or lock the iPhone.
 
@@ -324,7 +322,7 @@ Without the function (e.g. uploaded via Netlify Drop or opened locally), the app
 
 ### Publishing Updates
 
-1. When changing app files, increase the version number in `sw.js` (currently `waytoobsidian-v21`).
+1. When changing app files, increase the version number in `sw.js` (currently `waytoobsidian-v35`).
 2. Commit and push to GitHub. Netlify deploys automatically.
 3. The app loads the new version automatically on the next launch with an internet connection.
 

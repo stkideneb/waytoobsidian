@@ -59,15 +59,6 @@ function formatPR(pr, keys = PR_KEYS) {
   return keys.filter((k) => pr[k] > 0).map((k) => labels[k](pr[k])).join(" · ");
 }
 
-// Ausführlich mit Beschriftung, z. B. "Gewicht: 45 kg · Wdh.: 8"
-function formatPRLabeled(pr) {
-  const labels = { kg: ["Gewicht", " kg"], reps: ["Wdh.", ""], hold: ["Haltezeit", " Sek."] };
-  return PR_KEYS
-    .filter((k) => pr[k] > 0)
-    .map((k) => `${labels[k][0]}: <strong class="pr">${fmtNum(pr[k])}${labels[k][1]}</strong>`)
-    .join(" · ");
-}
-
 // Kurzform für Listen: Gewicht, sonst Wiederholungen, sonst Haltezeit
 function formatPRShort(pr) {
   const key = PR_KEYS.find((k) => pr[k] > 0);

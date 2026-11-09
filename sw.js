@@ -1,5 +1,5 @@
 // Bump the version whenever app files change so old caches get cleaned up.
-const CACHE = "waytoobsidian-v21";
+const CACHE = "waytoobsidian-v35";
 
 // Alles, was die App zum Starten braucht. Neue CSS-/JS-Dateien hier eintragen,
 // sonst fehlen sie offline.

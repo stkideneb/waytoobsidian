@@ -16,13 +16,26 @@ function show(id) {
   render();
 }
 
-// Auswahlfeld mit allen Übungen füllen, Auswahl bleibt erhalten
+// Übungen, für die es mindestens einen eingetragenen Wert gibt – zuletzt trainierte zuerst
+function trainedExerciseNames() {
+  const lastDate = new Map();
+  for (const e of allEntries()) {
+    const hasValue = e.sets.some((s) => PR_KEYS.some((k) => Number(s[k]) > 0));
+    if (hasValue && (lastDate.get(e.name) ?? "") < e.date) lastDate.set(e.name, e.date);
+  }
+  return [...lastDate].sort((a, b) => b[1].localeCompare(a[1]) || a[0].localeCompare(b[0], "de")).map(([name]) => name);
+}
+
+// Fortschritt-Auswahl: nur Übungen mit Werten. Auswahl bleibt erhalten,
+// sonst wird die zuletzt trainierte Übung gewählt.
 function fillExerciseSelect(select) {
   const previous = select.value;
-  select.innerHTML = exercises
-    .map((e) => `<option value="${safe(e.name)}">${safe(e.name)}</option>`)
-    .join("");
-  if (exercises.some((e) => e.name === previous)) select.value = previous;
+  const names = trainedExerciseNames();
+  select.innerHTML = names.length
+    ? names.map((name) => `<option value="${safe(name)}">${safe(name)}</option>`).join("")
+    : '<option value="">Noch keine Trainingsdaten</option>';
+  select.disabled = !names.length;
+  select.value = names.includes(previous) ? previous : (names[0] ?? "");
 }
 
 function refreshSelects() {

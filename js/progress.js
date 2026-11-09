@@ -18,7 +18,7 @@ function renderProgress() {
   const name = $("progressExercise").value;
   if (!name) {
     $("progressArm").hidden = true;
-    $("progressStats").textContent = "Keine Übungen vorhanden.";
+    $("progressStats").textContent = "Sobald du ein Workout mit Werten speicherst, erscheint die Übung hier.";
     drawChart($("chart"), [], "kg");
     return;
   }
@@ -58,6 +58,7 @@ function renderProgress() {
 }
 
 function renderStats() {
+  refreshSelects(); // neue Trainings / gelöschte Workouts berücksichtigen
   renderProgress();
   const records = getRecords();
   $("allRecords").innerHTML = records.length

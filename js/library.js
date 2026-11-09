@@ -84,10 +84,10 @@ function saveExerciseForm() {
       toast("Diese Übung gibt es schon", { error: true });
       return;
     }
-    exercises.push({ name, category, mode, sided });
+    exercises.push({ name, category, mode, sided, updatedAt: Date.now() });
     toast("Übung hinzugefügt");
   } else {
-    Object.assign(exercises[index], { category, mode, sided });
+    Object.assign(exercises[index], { category, mode, sided, updatedAt: Date.now() });
     toast("Übung gespeichert");
   }
 
@@ -113,7 +113,13 @@ async function removeExercise(index) {
 }
 
 function openExerciseStats(index) {
-  $("progressExercise").value = exercises[index].name;
+  const name = exercises[index].name;
+  refreshSelects();
+  if (!trainedExerciseNames().includes(name)) {
+    toast(`Für ${name} gibt es noch keine Werte`);
+    return;
+  }
+  $("progressExercise").value = name;
   progressArm = "Alle";
   show("progress");
 }
